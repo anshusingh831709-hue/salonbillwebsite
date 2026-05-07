@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Ramayana Salon & Academy - Billing</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="logo.png" alt="The Ramayana Salon & Academy" class="logo">
+      <h1>The Ramayana Salon & Academy</h1>
+      <p>Smart Billing Panel</p>
+    </header>
+
+    <main class="card">
+      <section class="customer-section">
+        <h2>Customer Details</h2>
+        <div class="grid">
+          <label>
+            Customer Name
+            <input id="customerName" type="text" placeholder="Enter customer name" />
+          </label>
+
+          <label>
+            WhatsApp Number (91XXXXXXXXXX)
+            <input id="whatsapp" type="tel" placeholder="918317097467" />
+          </label>
+
+          <label>
+            Payment Method
+            <select id="paymentMethod">
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Card">Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Digital Wallet">Digital Wallet</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="services-section">
+        <div class="services-header">
+          <h2>Services</h2>
+          <button id="addServiceBtn" type="button">+ Add Service</button>
+        </div>
+
+        <div id="servicesList" class="services-list"></div>
+      </section>
+
+      <section class="summary-section">
+        <div class="summary-row"><span>Subtotal</span><strong id="subtotal">₹0.00</strong></div>
+        <div class="summary-row"><span>Discount (%)</span><input id="discount" type="number" min="0" max="100" step="0.01" value="0" /></div>
+        <div class="summary-row total"><span>Total</span><strong id="total">₹0.00</strong></div>
+      </section>
+
+      <section class="actions">
+        <button id="generateBtn" type="button" class="primary">Generate Bill</button>
+        <button id="printBtn" type="button" class="secondary">Print Bill</button>
+        <button id="sendWhatsappBtn" type="button" class="success">Send to WhatsApp</button>
+      </section>
+
+      <section class="invoice-preview">
+        <h2>Invoice Preview</h2>
+        <textarea id="invoiceText" readonly placeholder="Generated bill will appear here..."></textarea>
+      </section>
+
+      <section class="history-section">
+        <h2>Customer History</h2>
+        <div class="history-search">
+          <input id="searchCustomer" type="text" placeholder="Enter customer name to view history..." />
+          <button id="searchBtn" type="button">Search History</button>
+        </div>
+        <div id="customerHistory" class="history-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <template id="serviceRowTemplate">
+    <div class="service-row">
+      <input class="service-name" type="text" placeholder="Service name" />
+      <input class="service-price" type="number" min="0" step="0.01" placeholder="Price" />
+      <input class="service-qty" type="number" min="1" value="1" placeholder="Qty" />
+      <span class="service-total">₹0.00</span>
+      <button type="button" class="remove-btn">Remove</button>
+    </div>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

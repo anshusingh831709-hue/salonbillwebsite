@@ -1,0 +1,575 @@
+:root {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --primary: #7c3aed;
+  --success: #059669;
+  --danger: #dc2626;
+  --border: #e5e7eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+header .logo {
+  max-width: 120px;
+  height: auto;
+  margin-bottom: 12px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.92rem;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+select {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: white;
+  cursor: pointer;
+}
+
+.services-section {
+  margin-top: 18px;
+}
+
+.services-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.service-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 80px 110px 90px;
+  gap: 8px;
+  align-items: center;
+}
+
+.service-total {
+  text-align: right;
+  font-weight: 600;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+#addServiceBtn {
+  background: #e9d5ff;
+  color: #4c1d95;
+}
+
+.remove-btn {
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+.summary-section {
+  margin-top: 18px;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+  padding: 12px 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+  gap: 12px;
+}
+
+.summary-row.total {
+  font-size: 1.1rem;
+}
+
+#discount {
+  max-width: 160px;
+}
+
+.actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.secondary {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+.success {
+  background: var(--success);
+  color: white;
+}
+
+.info {
+  background: #0ea5e9;
+  color: white;
+}
+
+.invoice-preview {
+  margin-top: 18px;
+}
+
+#invoiceText {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+}
+
+.history-section {
+  margin-top: 18px;
+}
+
+.history-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.history-search input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.history-search button {
+  background: #3b82f6;
+  color: white;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.history-item {
+  background: #f0f9ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.9rem;
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.history-item-detail {
+  color: #4b5563;
+  margin: 3px 0;
+}
+
+@media (max-width: 740px) {
+  .service-row {
+    grid-template-columns: 1fr;
+  }
+
+  .service-total {
+    text-align: left;
+  }
+}
+
+/* ============ TABLET OPTIMIZATION (600px - 1024px) ============ */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 100%;
+    padding: 0 12px;
+    margin: 12px auto;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 11px 14px;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 11px 14px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+
+  header h1 {
+    font-size: 1.6rem;
+  }
+
+  .service-row {
+    grid-template-columns: 1.5fr 1fr 70px 100px 80px;
+    gap: 6px;
+  }
+}
+
+/* ============ MOBILE OPTIMIZATION (max-width: 600px) ============ */
+@media (max-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0 10px;
+    margin: 8px auto;
+  }
+
+  header .logo {
+    max-width: 100px;
+    margin-bottom: 10px;
+  }
+
+  header h1 {
+    font-size: 1.4rem;
+    margin-bottom: 2px;
+  }
+
+  header p {
+    font-size: 0.85rem;
+  }
+
+  .card {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  main {
+    padding: 0;
+  }
+
+  h2 {
+    font-size: 1rem;
+    margin: 0 0 10px;
+  }
+
+  /* Form Grid */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  label {
+    gap: 5px;
+    font-size: 0.9rem;
+  }
+
+  /* Input Fields - Better for Touch */
+  input,
+  textarea,
+  select {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 16px;
+    min-height: 44px;
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  /* Services Section */
+  .services-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .services-header h2 {
+    margin: 0;
+  }
+
+  #addServiceBtn {
+    padding: 10px 14px;
+    font-size: 14px;
+    white-space: nowrap;
+    min-height: 40px;
+  }
+
+  .services-list {
+    gap: 8px;
+  }
+
+  /* Service Row - Stacked Layout */
+  .service-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    align-items: stretch;
+    background: #f9fafb;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .service-row input {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .service-row .service-total {
+    text-align: left;
+    padding: 5px 0;
+    font-size: 0.95rem;
+  }
+
+  .remove-btn {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 12px;
+  }
+
+  /* Summary */
+  .summary-section {
+    margin-top: 12px;
+    padding: 10px 0;
+  }
+
+  .summary-row {
+    margin: 8px 0;
+    padding: 6px 0;
+    gap: 8px;
+  }
+
+  .summary-row span:first-child {
+    flex: 1;
+    font-size: 0.95rem;
+  }
+
+  .summary-row strong {
+    font-size: 0.95rem;
+  }
+
+  .summary-row.total {
+    font-size: 1rem;
+    padding: 8px 0;
+  }
+
+  #discount {
+    max-width: 100%;
+    min-height: 40px;
+  }
+
+  /* Action Buttons */
+  .actions {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 15px;
+    cursor: pointer;
+    min-height: 44px;
+    font-weight: 500;
+    width: 100%;
+  }
+
+  /* Invoice Preview */
+  .invoice-preview {
+    margin-top: 12px;
+  }
+
+  .invoice-preview h2 {
+    margin-bottom: 8px;
+  }
+
+  #invoiceText {
+    width: 100%;
+    min-height: 180px;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+  }
+
+  /* History Section */
+  .history-section {
+    margin-top: 12px;
+  }
+
+  .history-search {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .history-search input {
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 14px;
+  }
+
+  .history-search button {
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 14px;
+  }
+
+  .history-list {
+    max-height: 300px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .history-item {
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+
+  .history-item-header {
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+
+  .history-item-detail {
+    font-size: 0.85rem;
+    margin: 2px 0;
+  }
+}
+
+/* ============ SMALL PHONE OPTIMIZATION (max-width: 400px) ============ */
+@media (max-width: 400px) {
+  header h1 {
+    font-size: 1.2rem;
+  }
+
+  header p {
+    font-size: 0.8rem;
+  }
+
+  .card {
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 0.95rem;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 15px;
+    padding: 10px 12px;
+    min-height: 42px;
+  }
+
+  .actions {
+    gap: 6px;
+  }
+
+  #invoiceText {
+    min-height: 150px;
+    font-size: 13px;
+  }
+}
