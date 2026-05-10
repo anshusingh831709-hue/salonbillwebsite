@@ -1,29 +1,29 @@
 :root {
-  /* Modern Salon Color Palette */
-  --bg: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  --bg-solid: #f8fafc;
+  /* Luxury Gold Salon Color Palette */
+  --bg: linear-gradient(135deg, #fefefe 0%, #f8f9fa 100%);
+  --bg-solid: #fefefe;
   --card: #ffffff;
   --card-hover: #fefefe;
-  --text: #1e293b;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
-  --primary: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
-  --primary-solid: #8b5cf6;
-  --primary-hover: #7c3aed;
-  --success: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  --success-solid: #10b981;
-  --danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  --danger-solid: #ef4444;
-  --warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --info: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-success: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --text: #2d3748;
+  --text-muted: #718096;
+  --text-light: #a0aec0;
+  --primary: linear-gradient(135deg, #c8a24a 0%, #a67c2e 100%);
+  --primary-solid: #c8a24a;
+  --primary-hover: #a67c2e;
+  --success: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  --success-solid: #2e7d32;
+  --danger: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  --danger-solid: #e53e3e;
+  --warning: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+  --info: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+  --border: #e7d6a0;
+  --border-light: #f7f1e3;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --gradient-primary: linear-gradient(90deg, #c8a24a, #a67c2e);
+  --gradient-success: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  --gradient-accent: linear-gradient(135deg, #c8a24a 0%, #a67c2e 100%);
 }
 
 * {
@@ -32,7 +32,7 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -89,6 +89,7 @@ header h1 {
   margin: 0;
   font-size: 2.2rem;
   font-weight: 700;
+  font-family: 'Playfair Display', serif;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -106,9 +107,9 @@ header p {
 .card {
   background: var(--card);
   border: 1px solid var(--border-light);
-  border-radius: 24px;
+  border-radius: 12px;
   padding: 32px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -134,6 +135,7 @@ h2 {
   margin: 0 0 20px;
   font-size: 1.4rem;
   font-weight: 600;
+  font-family: 'Playfair Display', serif;
   color: var(--text);
   position: relative;
   padding-left: 16px;
@@ -149,6 +151,16 @@ h2::before {
   height: 24px;
   background: var(--gradient-primary);
   border-radius: 2px;
+}
+
+section {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+section:last-of-type {
+  border-bottom: none;
 }
 
 .grid {
