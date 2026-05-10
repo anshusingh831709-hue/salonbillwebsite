@@ -145,11 +145,9 @@ function generateInvoiceText() {
     .join("\n");
 
   const bill = [
-    "══════════════════════════════════════",
+   
     "THE RAMAYANA SALON & ACADEMY",
     "Beauty | Grooming | Style",
-    "══════════════════════════════════════",
-    "",
     `Receipt No: ${invoiceID}`,
     `Date: ${dateText} | Time: ${timeText}`,
     "",
@@ -160,27 +158,19 @@ function generateInvoiceText() {
     "Phone: 8317097467",
     "Website: https://sl1nk.com/rpinxw7",
     "",
-    "──────────────────────────────────────",
     "SERVICES",
-    "──────────────────────────────────────",
     servicesLines,
     "",
-    "──────────────────────────────────────",
     `Subtotal:             Rs. ${subtotal.toFixed(2)}`,
     `Discount (${discountPercent.toFixed(2)}%):  -Rs. ${discount.toFixed(2)}`,
     `TOTAL AMOUNT:         Rs. ${total.toFixed(2)}`,
     `Payment Mode: ${paymentMethod}`,
     "Status: PAID",
-    "──────────────────────────────────────",
     "",
-    "Offers:",
-    "- Refer a Friend & Get 10% OFF",
-    "- Birthday Month Special - 15% OFF",
-    "- Membership Rewards Available",
-    "",
+  
     "Thank you for visiting Ramayana Salon!",
     "We look forward to serving you again.",
-    "══════════════════════════════════════"
+  
   ].join("\n");
 
   invoiceTextEl.value = bill;
