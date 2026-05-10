@@ -1,3 +1,4 @@
+const WEBSITE_URL = "https://newsalonacademy.vercel.app/";
 const servicesList = document.getElementById("servicesList");
 const serviceRowTemplate = document.getElementById("serviceRowTemplate");
 const addServiceBtn = document.getElementById("addServiceBtn");
@@ -153,7 +154,7 @@ function generateInvoiceText() {
     "Owner: Miss Anshu Singh",
     "Address: Nandanagar, New Project Road, Gorakhpur",
     "Phone: +918317097467",
-    "Website: https://newsalonacademy.vercel.app/",
+    `Website: ${WEBSITE_URL}`,
     "SERVICES",
     "",
     servicesLines,
@@ -280,7 +281,7 @@ async function generateInvoicePdf() {
   y += 14;
   doc.text("Address: Nandanagar, New Project Road, Gorakhpur", left, y);
   y += 14;
-  doc.text("Phone: +918317097467   Website: https://newsalonacademy.vercel.app/", left, y);
+  doc.text(`Phone: +918317097467   Website: ${WEBSITE_URL}`, left, y);
   y += 20;
 
   doc.setDrawColor(...gold);

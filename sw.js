@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salon-billing-v2';
+const CACHE_NAME = 'salon-billing-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -13,6 +13,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
