@@ -1,12 +1,3 @@
-// Register service worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => console.log('SW registered'))
-      .catch(error => console.log('SW registration failed'));
-  });
-}
-
 const servicesList = document.getElementById("servicesList");
 const serviceRowTemplate = document.getElementById("serviceRowTemplate");
 const addServiceBtn = document.getElementById("addServiceBtn");
@@ -17,11 +8,35 @@ const subtotalEl = document.getElementById("subtotal");
 const totalEl = document.getElementById("total");
 const discountEl = document.getElementById("discount");
 const invoiceTextEl = document.getElementById("invoiceText");
+const openDashboardBtn = document.getElementById("openDashboardBtn");
+const refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
+const todayRevenueEl = document.getElementById("todayRevenue");
+const monthRevenueEl = document.getElementById("monthRevenue");
+const totalInvoicesEl = document.getElementById("totalInvoices");
+const uniqueCustomersEl = document.getElementById("uniqueCustomers");
+const eyebrowCountEl = document.getElementById("eyebrowCount");
+const dayWiseListEl = document.getElementById("dayWiseList");
+const topServicesEl = document.getElementById("topServices");
+const monthSummaryEl = document.getElementById("monthSummary");
+const dashboardTableEl = document.getElementById("dashboardTable");
 
-// Backend API URL
-const API_URL = window.location.hostname === "localhost"
+// Bulk Messaging Elements
+const bulkMessageBtn = document.getElementById("bulkMessageBtn");
+const bulkMessageModal = document.getElementById("bulkMessageModal");
+const closeBulkModal = document.getElementById("closeBulkModal");
+const bulkMessageTitle = document.getElementById("bulkMessageTitle");
+const bulkMessageContent = document.getElementById("bulkMessageContent");
+const sendToAll = document.getElementById("sendToAll");
+const sendToRecent = document.getElementById("sendToRecent");
+const messagePreview = document.getElementById("messagePreview");
+const customerCount = document.getElementById("customerCount");
+const sendBulkMessageBtn = document.getElementById("sendBulkMessageBtn");
+const cancelBulkMessageBtn = document.getElementById("cancelBulkMessageBtn");
+
+// Backend API URL - Always use localhost:5000 for development, or fallback to origin
+const API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
   ? "http://localhost:5000"
-  : window.location.origin;
+  : window.location.protocol + "//" + window.location.host;
 
 function currency(amount) {
   return `₹${amount.toFixed(2)}`;
@@ -379,6 +394,7 @@ async function saveInvoiceToDatabase() {
     const result = await response.json();
     if (result.success) {
       alert("Invoice saved to database!");
+      loadDashboard();
     } else {
       alert("Error saving invoice: " + result.error);
     }
@@ -476,6 +492,28 @@ sendWhatsappBtn.addEventListener("click", () => {
 });
 discountEl.addEventListener("input", updateSummary);
 
+refreshDashboardBtn.addEventListener("click", loadDashboard);
+openDashboardBtn.addEventListener("click", () => {
+  document.getElementById("dashboardSection").scrollIntoView({ behavior: "smooth" });
+});
+
+// Bulk Messaging Event Listeners
+bulkMessageBtn.addEventListener("click", openBulkMessageModal);
+closeBulkModal.addEventListener("click", closeBulkMessageModal);
+cancelBulkMessageBtn.addEventListener("click", closeBulkMessageModal);
+sendBulkMessageBtn.addEventListener("click", sendBulkMessage);
+bulkMessageContent.addEventListener("input", updateMessagePreview);
+bulkMessageTitle.addEventListener("input", updateMessagePreview);
+sendToAll.addEventListener("change", updateCustomerCount);
+sendToRecent.addEventListener("change", updateCustomerCount);
+
+// Close modal when clicking outside
+bulkMessageModal.addEventListener("click", (e) => {
+  if (e.target === bulkMessageModal) {
+    closeBulkMessageModal();
+  }
+});
+
 // History Search
 document.getElementById("searchBtn").addEventListener("click", fetchCustomerHistory);
 document.getElementById("searchCustomer").addEventListener("keypress", (e) => {
@@ -502,24 +540,371 @@ async function fetchCustomerHistory() {
       return;
     }
 
-    historyDiv.innerHTML = result.data
-      .map(
-        (invoice, index) =>
-          `<div class="history-item">
-            <div class="history-item-header">
-              <span>Invoice #${invoice._id ? invoice._id.toString().slice(-6) : index + 1}</span>
-              <span>${new Date(invoice.createdAt).toLocaleDateString("en-IN")}</span>
-            </div>
-            <div class="history-item-detail">Total: ₹${invoice.total.toFixed(2)}</div>
-            <div class="history-item-detail">WhatsApp: ${invoice.whatsapp}</div>
-            <div class="history-item-detail">Payment: ${invoice.paymentMethod}</div>
-            <div class="history-item-detail">Services: ${invoice.services.length} items</div>
-          </div>`
-      )
+    const groupedInvoices = result.data.reduce((groups, invoice, index) => {
+      const invoiceDate = new Date(invoice.createdAt);
+      const dateKey = invoiceDate.toISOString().slice(0, 10);
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push({ invoice, index });
+      return groups;
+    }, {});
+
+    const sortedDateKeys = Object.keys(groupedInvoices).sort((a, b) => new Date(b) - new Date(a));
+
+    historyDiv.innerHTML = sortedDateKeys
+      .map((dateKey) => {
+        const displayDate = new Date(dateKey).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+
+        const items = groupedInvoices[dateKey]
+          .map(({ invoice, index }) =>
+            `<div class="history-item">
+              <div class="history-item-header">
+                <span>Invoice #${invoice._id ? invoice._id.toString().slice(-6) : index + 1}</span>
+                <span>${new Date(invoice.createdAt).toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}</span>
+              </div>
+              <div class="history-item-detail">Total: ₹${invoice.total.toFixed(2)}</div>
+              <div class="history-item-detail">WhatsApp: ${invoice.whatsapp}</div>
+              <div class="history-item-detail">Payment: ${invoice.paymentMethod}</div>
+              <div class="history-item-detail">Services: ${invoice.services.length} items</div>
+            </div>`
+          )
+          .join("");
+
+        return `<div class="history-date-group">
+          <div class="history-date-title">${displayDate}</div>
+          ${items}
+        </div>`;
+      })
       .join("");
   } catch (error) {
     historyDiv.innerHTML = `<p>Error: ${error.message}</p>`;
   }
 }
 
+// Bulk Messaging Functions
+async function openBulkMessageModal() {
+  bulkMessageModal.style.display = "block";
+  document.body.style.overflow = "hidden";
+  
+  // Load customer count
+  await updateCustomerCount();
+  updateMessagePreview();
+}
+
+function closeBulkMessageModal() {
+  bulkMessageModal.style.display = "none";
+  document.body.style.overflow = "auto";
+  
+  // Reset form
+  bulkMessageTitle.value = "";
+  bulkMessageContent.value = "";
+  sendToAll.checked = true;
+  sendToRecent.checked = false;
+}
+
+async function updateCustomerCount() {
+  try {
+    const response = await fetch(`${API_URL}/api/invoices`);
+    const result = await response.json();
+    
+    if (!result.success) {
+      customerCount.textContent = "Error loading customers";
+      return;
+    }
+    
+    const invoices = result.data;
+    let customers = [];
+    
+    if (sendToRecent.checked) {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      customers = [...new Set(
+        invoices
+          .filter(invoice => new Date(invoice.createdAt) >= thirtyDaysAgo)
+          .map(invoice => ({
+            name: invoice.customerName,
+            whatsapp: invoice.whatsapp
+          }))
+          .filter(customer => customer.whatsapp && customer.whatsapp.trim())
+      )];
+    } else {
+      customers = [...new Set(
+        invoices
+          .map(invoice => ({
+            name: invoice.customerName,
+            whatsapp: invoice.whatsapp
+          }))
+          .filter(customer => customer.whatsapp && customer.whatsapp.trim())
+      )];
+    }
+    
+    customerCount.textContent = `📱 Will send to ${customers.length} customers`;
+  } catch (error) {
+    customerCount.textContent = "Error loading customer count";
+    console.error("Error loading customers:", error);
+  }
+}
+
+function updateMessagePreview() {
+  const title = bulkMessageTitle.value.trim();
+  const content = bulkMessageContent.value.trim();
+  
+  let preview = "";
+  if (title) {
+    preview += `🎉 ${title}\n\n`;
+  }
+  preview += content;
+  
+  messagePreview.textContent = preview || "Your message will appear here...";
+}
+
+async function sendBulkMessage() {
+  const title = bulkMessageTitle.value.trim();
+  const content = bulkMessageContent.value.trim();
+  
+  if (!content) {
+    alert("Please enter a message to send.");
+    return;
+  }
+  
+  if (!confirm("Are you sure you want to send this message to all selected customers? This will open multiple WhatsApp tabs.")) {
+    return;
+  }
+  
+  try {
+    sendBulkMessageBtn.disabled = true;
+    sendBulkMessageBtn.textContent = "⏳ Preparing messages...";
+    
+    const response = await fetch(`${API_URL}/api/bulk-message`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        content,
+        sendToRecentOnly: sendToRecent.checked
+      }),
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      sendBulkMessageBtn.textContent = "🚀 Opening WhatsApp tabs...";
+      
+      // Open WhatsApp tabs for each customer
+      let openedCount = 0;
+      const totalToSend = result.whatsappUrls.length;
+      
+      for (let i = 0; i < result.whatsappUrls.length; i++) {
+        const customer = result.whatsappUrls[i];
+        try {
+          // Use unique target name for each URL to ensure separate tabs
+          window.open(customer.url, `whatsapp_${i}_${Date.now()}`);
+          openedCount++;
+          
+          // Small delay between openings to prevent browser blocking
+          await new Promise(resolve => setTimeout(resolve, 300));
+        } catch (error) {
+          console.error("Failed to open WhatsApp for", customer.name, error);
+        }
+      }
+      
+      let message = `✅ Opened ${openedCount}/${totalToSend} WhatsApp tabs!`;
+      message += `\n\n👥 ${result.whatsappUrls.length} unique customers contacted.`;
+      message += `\n\n💡 Confirm 'Send' in WhatsApp to deliver each message.`;
+      
+      alert(message);
+      closeBulkMessageModal();
+    } else {
+      alert("❌ Error preparing bulk message: " + result.error);
+    }
+  } catch (error) {
+    alert("❌ Error: " + error.message);
+  } finally {
+    sendBulkMessageBtn.disabled = false;
+    sendBulkMessageBtn.textContent = "🚀 Send Bulk Message";
+  }
+}
+
 addServiceRow({ name: "Haircut", price: 300, qty: 1 });
+loadDashboard();
+setInterval(loadDashboard, 30000);
+
+window.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    loadDashboard();
+  }
+});
+
+async function loadDashboard() {
+  try {
+    console.log("📊 Loading dashboard from API:", API_URL);
+    const response = await fetch(`${API_URL}/api/invoices`);
+    
+    if (!response.ok) {
+      console.error("API Error:", response.status, response.statusText);
+      dashboardTableEl.innerHTML = `<div style="color: red; padding: 20px;">
+        <strong>Error:</strong> Cannot connect to backend API at ${API_URL}<br>
+        Status: ${response.status} ${response.statusText}<br>
+        Please ensure backend server is running on port 5000.
+      </div>`;
+      return;
+    }
+    
+    const result = await response.json();
+    if (!result.success) {
+      console.warn("API returned error:", result.error);
+      dashboardTableEl.innerHTML = `<div style="color: orange; padding: 20px;">
+        <strong>Warning:</strong> ${result.error || "Unable to load dashboard"}<br>
+        Invoice data may not be available.
+      </div>`;
+      return;
+    }
+    
+    console.log("✅ Dashboard data loaded:", result.data.length, "invoices");
+    renderDashboard(result.data);
+  } catch (error) {
+    console.error("Dashboard load failed:", error);
+    dashboardTableEl.innerHTML = `<div style="color: red; padding: 20px;">
+      <strong>Error:</strong> ${error.message}<br>
+      Could not connect to backend at ${API_URL}<br>
+      Make sure to run: npm start (in backend folder)
+    </div>`;
+  }
+}
+
+function renderDashboard(invoices) {
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const startOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+
+  const totals = {
+    today: 0,
+    thisMonth: 0,
+    lastMonth: 0,
+    invoicesThisMonth: 0,
+    invoicesLastMonth: 0,
+  };
+
+  const serviceCounts = {};
+  const customerSet = new Set();
+  const eyebrowServiceKey = /brow|eyebrow|eyebrows/i;
+  let eyebrowCountThisMonth = 0;
+
+  const dateGroups = {};
+  const dayWise = {};
+
+  invoices.forEach((invoice) => {
+    const invoiceDate = new Date(invoice.createdAt);
+    const invoiceDayKey = invoiceDate.toISOString().slice(0, 10);
+    const amount = Number(invoice.total) || 0;
+    customerSet.add(invoice.customerName || "Unknown");
+
+    if (invoiceDate >= startOfToday) {
+      totals.today += amount;
+    }
+    if (invoiceDate >= startOfThisMonth) {
+      totals.thisMonth += amount;
+      totals.invoicesThisMonth += 1;
+    }
+    if (invoiceDate >= startOfLastMonth && invoiceDate <= endOfLastMonth) {
+      totals.lastMonth += amount;
+      totals.invoicesLastMonth += 1;
+    }
+
+    if (!dateGroups[invoiceDayKey]) {
+      dateGroups[invoiceDayKey] = [];
+    }
+    dateGroups[invoiceDayKey].push(invoice);
+
+    if (!dayWise[invoiceDayKey]) {
+      dayWise[invoiceDayKey] = 0;
+    }
+    dayWise[invoiceDayKey] += amount;
+
+    invoice.services?.forEach((service) => {
+      const name = (service.name || "Unknown").trim();
+      const quantity = Number(service.qty) || 1;
+      const count = serviceCounts[name] || 0;
+      serviceCounts[name] = count + quantity;
+      if (invoiceDate >= startOfThisMonth && eyebrowServiceKey.test(name)) {
+        eyebrowCountThisMonth += quantity;
+      }
+    });
+  });
+
+  todayRevenueEl.textContent = currency(totals.today);
+  monthRevenueEl.textContent = currency(totals.thisMonth);
+  totalInvoicesEl.textContent = invoices.length;
+  uniqueCustomersEl.textContent = customerSet.size;
+  eyebrowCountEl.textContent = eyebrowCountThisMonth;
+
+  const sortedDays = Object.keys(dayWise)
+    .sort((a, b) => new Date(b) - new Date(a))
+    .slice(0, 7);
+  dayWiseListEl.innerHTML = sortedDays
+    .map((dayKey) => {
+      const dayTotal = currency(dayWise[dayKey]);
+      const dayLabel = new Date(dayKey).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+      });
+      return `<div><span>${dayLabel}</span><strong>${dayTotal}</strong></div>`;
+    })
+    .join("");
+
+  const topServices = Object.entries(serviceCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6);
+  topServicesEl.innerHTML = topServices
+    .map(([name, count]) => `<li><span>${name}</span><strong>${count}</strong></li>`)
+    .join("");
+
+  monthSummaryEl.innerHTML = [
+    `<div><span>Invoices This Month</span><strong>${totals.invoicesThisMonth}</strong></div>`,
+    `<div><span>Last Month Revenue</span><strong>${currency(totals.lastMonth)}</strong></div>`,
+    `<div><span>Invoices Last Month</span><strong>${totals.invoicesLastMonth}</strong></div>`,
+  ].join("");
+
+  const sortedDates = Object.keys(dateGroups).sort((a, b) => new Date(b) - new Date(a));
+  const tableHtml = sortedDates
+    .flatMap((dateKey) => {
+      const displayDate = new Date(dateKey).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+      const rows = dateGroups[dateKey]
+        .map((invoice) => {
+          const invoiceDate = new Date(invoice.createdAt);
+          return `<div class="dashboard-row">
+            <span>${displayDate} ${invoiceDate.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
+            <span>${invoice.customerName || "Unknown"}</span>
+            <span>₹${Number(invoice.total).toFixed(2)}</span>
+            <span>${invoice.paymentMethod || "N/A"}</span>
+            <span>${invoice.services?.length || 0} items</span>
+          </div>`;
+        })
+        .join("");
+      return [`<div class="dashboard-row dashboard-row-header">
+            <span>Date</span>
+            <span>Customer</span>
+            <span>Amount</span>
+            <span>Payment</span>
+            <span>Items</span>
+          </div>`, rows];
+    })
+    .join("");
+  dashboardTableEl.innerHTML = tableHtml || "<div>No invoice records available yet.</div>";
+}

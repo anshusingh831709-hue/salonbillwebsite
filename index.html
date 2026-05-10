@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#4CAF50" />
-  <meta name="description" content="Smart Billing Panel for The Ramayana Salon & Academy" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="logo.png" />
   <title>The Ramayana Salon & Academy - Billing</title>
   <link rel="stylesheet" href="styles.css" />
-
+</head>
 <body>
   <div class="container">
     <header>
-      <img src="logo.png" alt="The Ramayana Salon & Academy" class="logo">
-      <h1>The Ramayana Salon & Academy</h1>
-      <p>Smart Billing Panel</p>
+      <div class="brand-row">
+        <img src="logo.png" alt="The Ramayana Salon & Academy" class="logo">
+        <div class="brand-text">
+          <h1>The Ramayana Salon & Academy</h1>
+          <p>Smart Billing Panel</p>
+        </div>
+      </div>
+      <div class="header-buttons">
+        <button id="bulkMessageBtn" type="button" class="success" title="Send Bulk WhatsApp Messages">📱 Bulk Message</button>
+        <button id="openDashboardBtn" type="button" class="info">Open Dashboard</button>
+      </div>
     </header>
 
     <main class="card">
@@ -71,6 +75,69 @@
         <textarea id="invoiceText" readonly placeholder="Generated bill will appear here..."></textarea>
       </section>
 
+      <section id="dashboardSection" class="dashboard-section">
+        <div class="dashboard-header">
+          <h2>Salon Analytics</h2>
+          <button id="refreshDashboardBtn" type="button" class="secondary">Refresh Dashboard</button>
+        </div>
+
+        <div class="dashboard-cards">
+          <div class="dashboard-card">
+            <div class="dashboard-icon">💰</div>
+            <div>
+              <strong id="todayRevenue">₹0.00</strong>
+              <p>Today's Revenue</p>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-icon">📆</div>
+            <div>
+              <strong id="monthRevenue">₹0.00</strong>
+              <p>This Month Revenue</p>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-icon">📊</div>
+            <div>
+              <strong id="totalInvoices">0</strong>
+              <p>Total Invoices</p>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-icon">👥</div>
+            <div>
+              <strong id="uniqueCustomers">0</strong>
+              <p>Customers Served</p>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-icon">✨</div>
+            <div>
+              <strong id="eyebrowCount">0</strong>
+              <p>Eyebrow Services This Month</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-panel">
+            <h3>Day-wise Earnings</h3>
+            <div id="dayWiseList" class="dashboard-list"></div>
+          </div>
+          <div class="dashboard-panel dashboard-panel-right">
+            <h3>Top Services</h3>
+            <ul id="topServices" class="dashboard-list"></ul>
+            <h3>Last Month Summary</h3>
+            <div id="monthSummary" class="dashboard-list"></div>
+          </div>
+        </div>
+
+        <div class="dashboard-table-wrapper">
+          <h3>All Services & Customers by Date</h3>
+          <div id="dashboardTable" class="dashboard-table"></div>
+        </div>
+      </section>
+
       <section class="history-section">
         <h2>Customer History</h2>
         <div class="history-search">
@@ -79,6 +146,57 @@
         </div>
         <div id="customerHistory" class="history-list"></div>
       </section>
+
+      <!-- Bulk Messaging Modal -->
+      <div id="bulkMessageModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>📱 Send Bulk WhatsApp Messages</h2>
+            <button id="closeBulkModal" class="close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="bulk-message-form">
+              <label>
+                Message Title
+                <input id="bulkMessageTitle" type="text" placeholder="e.g., Special Diwali Offer!" />
+              </label>
+              <label>
+                Message Content
+                <textarea id="bulkMessageContent" rows="6" placeholder="Dear valued customer,
+
+We have exciting offers for you this month:
+• 20% OFF on all facial treatments
+• Free eyebrow threading with haircut
+• Birthday month special discounts
+
+Visit us today!
+The Ramayana Salon & Academy"></textarea>
+              </label>
+              <div class="bulk-options">
+                <label>
+                  <input id="sendToAll" type="checkbox" checked />
+                  Send to all customers
+                </label>
+                <label>
+                  <input id="sendToRecent" type="checkbox" />
+                  Send only to customers visited in last 30 days
+                </label>
+              </div>
+            </div>
+            <div class="customer-preview">
+              <h3>📋 Message Preview</h3>
+              <div id="messagePreview" class="message-preview"></div>
+              <div class="customer-count">
+                <span id="customerCount">Loading customers...</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="sendBulkMessageBtn" type="button" class="primary">🚀 Send Bulk Message</button>
+            <button id="cancelBulkMessageBtn" type="button" class="secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -94,5 +212,23 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
+  <script>
+    // Diagnostics - Show in console and page
+    console.log("🔍 Diagnostics Report:");
+    console.log("📍 Hostname:", window.location.hostname);
+    console.log("🌐 Origin:", window.location.origin);
+    console.log("🔗 API URL:", window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:5000" : window.location.protocol + "//" + window.location.host);
+    
+    // Show connection status in 2 seconds
+    setTimeout(() => {
+      const API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:5000" : window.location.protocol + "//" + window.location.host;
+      fetch(API_URL + "/health", { method: "GET" })
+        .then(res => {
+          if (res.ok) console.log("✅ Backend API is reachable at", API_URL);
+          else console.error("⚠️  Backend returned status", res.status);
+        })
+        .catch(err => console.error("❌ Cannot reach Backend API at", API_URL, "-", err.message));
+    }, 500);
+  </script>
 </body>
 </html>
