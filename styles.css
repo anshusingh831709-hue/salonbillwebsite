@@ -643,14 +643,14 @@ button:active {
   transition: transform 0.3s ease;
 }
 
-.collapsed {
-  display: none;
-}
-
 .dashboard-table {
   display: grid;
   gap: 16px;
   margin-top: 16px;
+}
+
+.dashboard-table.collapsed {
+  display: none;
 }
 
 .dashboard-row {
