@@ -520,6 +520,21 @@ document.getElementById("searchCustomer").addEventListener("keypress", (e) => {
   if (e.key === "Enter") fetchCustomerHistory();
 });
 
+// Collapsible table section
+document.getElementById("tableToggleHeader").addEventListener("click", () => {
+  const table = document.getElementById("dashboardTable");
+  const icon = document.querySelector("#tableToggleHeader i");
+  if (table.classList.contains("collapsed")) {
+    table.classList.remove("collapsed");
+    icon.classList.remove("fa-chevron-down");
+    icon.classList.add("fa-chevron-up");
+  } else {
+    table.classList.add("collapsed");
+    icon.classList.remove("fa-chevron-up");
+    icon.classList.add("fa-chevron-down");
+  }
+});
+
 async function fetchCustomerHistory() {
   const customerName = document.getElementById("searchCustomer").value.trim();
 

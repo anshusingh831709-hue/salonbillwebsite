@@ -623,6 +623,30 @@ button:active {
   margin-top: 24px;
 }
 
+.collapsible-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+
+.collapsible-header:hover {
+  color: var(--primary-solid);
+}
+
+.collapsible-header i {
+  transition: transform 0.3s ease;
+}
+
+.collapsed {
+  display: none;
+}
+
 .dashboard-table {
   display: grid;
   gap: 16px;
