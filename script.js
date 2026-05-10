@@ -140,7 +140,7 @@ function generateInvoiceText() {
 
   const servicesLines = services
     .map((item) => {
-      return `- ${item.name} x ${item.qty}            Rs. ${item.total.toFixed(2)}`;
+      return `${item.name} x ${item.qty}            Rs. ${item.total.toFixed(2)}`;
     })
     .join("\n");
 
