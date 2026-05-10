@@ -1137,6 +1137,15 @@ button:active {
   align-items: center;
 }
 
+.install-button {
+  display: none;
+  white-space: nowrap;
+}
+
+.install-button.show {
+  display: inline-flex;
+}
+
 /* Modal Styles */
 .modal {
   display: none;

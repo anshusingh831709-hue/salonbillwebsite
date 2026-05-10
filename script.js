@@ -9,6 +9,7 @@ const totalEl = document.getElementById("total");
 const discountEl = document.getElementById("discount");
 const invoiceTextEl = document.getElementById("invoiceText");
 const openDashboardBtn = document.getElementById("openDashboardBtn");
+const installBtn = document.getElementById("installBtn");
 const refreshDashboardBtn = document.getElementById("refreshDashboardBtn");
 const todayRevenueEl = document.getElementById("todayRevenue");
 const monthRevenueEl = document.getElementById("monthRevenue");
@@ -496,6 +497,42 @@ refreshDashboardBtn.addEventListener("click", loadDashboard);
 openDashboardBtn.addEventListener("click", () => {
   document.getElementById("dashboardSection").scrollIntoView({ behavior: "smooth" });
 });
+
+let deferredPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  installBtn.classList.add("show");
+});
+
+installBtn.addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const choiceResult = await deferredPrompt.userChoice;
+  if (choiceResult.outcome === "accepted") {
+    console.log("PWA install accepted");
+  } else {
+    console.log("PWA install dismissed");
+  }
+  deferredPrompt = null;
+  installBtn.classList.remove("show");
+});
+
+window.addEventListener("appinstalled", () => {
+  console.log("App installed successfully.");
+  installBtn.classList.remove("show");
+});
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then((registration) => {
+      console.log("Service Worker registered with scope:", registration.scope);
+    })
+    .catch((error) => {
+      console.warn("Service Worker registration failed:", error);
+    });
+}
 
 // Bulk Messaging Event Listeners
 bulkMessageBtn.addEventListener("click", openBulkMessageModal);
