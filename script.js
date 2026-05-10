@@ -152,7 +152,7 @@ function generateInvoiceText() {
     `Customer: ${customerName}`,
     "Owner: Miss Anshu Singh",
     "Address: Nandanagar, New Project Road, Gorakhpur",
-    "Phone: 8317097467",
+    "Phone: +918317097467",
     "Website: https://newsalonacademy.vercel.app/",
     "SERVICES",
     "",
@@ -280,7 +280,7 @@ async function generateInvoicePdf() {
   y += 14;
   doc.text("Address: Nandanagar, New Project Road, Gorakhpur", left, y);
   y += 14;
-  doc.text("Phone: 8317097467   Website: https://newsalonacademy.vercel.app/", left, y);
+  doc.text("Phone: +918317097467   Website: https://newsalonacademy.vercel.app/", left, y);
   y += 20;
 
   doc.setDrawColor(...gold);
