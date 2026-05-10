@@ -142,22 +142,18 @@ function generateInvoiceText() {
     .map((item) => {
       return `${item.name} x ${item.qty}            Rs. ${item.total.toFixed(2)}`;
     })
-    .join("\n");
+    .join("\n\n");
 
   const bill = [
-   
     "THE RAMAYANA SALON & ACADEMY",
     "Beauty | Grooming | Style",
     `Receipt No: ${invoiceID}`,
     `Date: ${dateText} | Time: ${timeText}`,
-    "",
     `Customer: ${customerName}`,
     "Owner: Miss Anshu Singh",
-    "",
     "Address: Nandanagar, New Project Road, Gorakhpur",
-    "Phone: +918317097467",
+    "Phone: 8317097467",
     "Website: https://sl1nk.com/rpinxw7",
-    "",
     "SERVICES",
     "",
     servicesLines,
@@ -167,11 +163,8 @@ function generateInvoiceText() {
     `TOTAL AMOUNT:         Rs. ${total.toFixed(2)}`,
     `Payment Mode: ${paymentMethod}`,
     "Status: PAID",
-    "",
-  
     "Thank you for visiting Ramayana Salon!",
     "We look forward to serving you again.",
-  
   ].join("\n");
 
   invoiceTextEl.value = bill;
