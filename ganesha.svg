@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Lord Ganesha">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5c16f"/>
+      <stop offset="100%" stop-color="#c28523"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="240" rx="28" fill="#fff4e0"/>
+  <path d="M120 40c-26 0-46 24-46 54 0 28 20 50 46 50s46-22 46-50c0-30-20-54-46-54z" fill="url(#grad)"/>
+  <path d="M72 84c-8 10-8 32 0 42 9 12 30 11 40 3 8-6 9-20 9-26-1-9-6-16-8-20-7-11-34-19-41 1z" fill="#fff" opacity="0.5"/>
+  <path d="M168 84c8 10 8 32 0 42-9 12-30 11-40 3-8-6-9-20-9-26 1-9 6-16 8-20 7-11 34-19 41 1z" fill="#fff" opacity="0.5"/>
+  <circle cx="94" cy="120" r="16" fill="#fff" opacity="0.7"/>
+  <circle cx="146" cy="120" r="16" fill="#fff" opacity="0.7"/>
+  <path d="M84 98c4-8 10-16 19-16s15 8 19 16" stroke="#8f5428" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M130 138c-4 10-12 16-18 16s-14-6-18-16" stroke="#8f5428" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M120 52c-14 0-38 4-44 28-2 8 0 20 16 24 15 4 24 0 28-6 0 0 8 12 24 8 10-2 16-10 18-18 4-16-4-32-18-36-6-2-12-2-24-0.5z" fill="#d48c29"/>
+  <path d="M120 172c24 0 48 6 58 24 3 6 0 14-6 16-8 4-18-4-24-10-8-8-18-12-30-12s-22 4-30 12c-6 6-16 14-24 10-6-2-9-10-6-16 10-18 34-24 58-24z" fill="#d48c29"/>
+  <text x="120" y="210" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#a6701f">ॐ</text>
+</svg>

@@ -66,6 +66,7 @@ header {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .brand-text {
@@ -79,6 +80,21 @@ header .logo {
   margin: 0;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
   transition: transform 0.3s ease;
+}
+
+header .ganesha-img {
+  max-width: 90px;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.devotional-text {
+  margin: 8px 0 0;
+  color: #a67c2e;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
 header .logo:hover {
