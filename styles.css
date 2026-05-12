@@ -86,6 +86,7 @@ header .ganesha-img {
   max-width: 500px;
   width: 100%;
   height: auto;
+  min-width: 180px;
   border-radius: 18px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
@@ -100,6 +101,41 @@ header .ganesha-img {
 
 header .logo:hover {
   transform: scale(1.05);
+}
+
+@media (max-width: 960px) {
+  .brand-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .brand-text {
+    align-items: center;
+  }
+
+  header .ganesha-img {
+    max-width: 360px;
+  }
+}
+
+@media (max-width: 640px) {
+  header {
+    padding: 20px 0;
+  }
+
+  header .ganesha-img {
+    max-width: 280px;
+  }
+
+  header h1 {
+    font-size: 1.9rem;
+  }
+
+  header p,
+  .devotional-text {
+    font-size: 0.95rem;
+  }
 }
 
 header h1 {
