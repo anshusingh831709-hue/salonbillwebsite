@@ -38,7 +38,8 @@
         <div class="grid">
           <label>
             Customer Name
-            <input id="customerName" type="text" placeholder="Enter customer name" />
+            <input id="customerName" type="text" placeholder="Enter customer name" list="customerNamesList" autocomplete="off" />
+            <datalist id="customerNamesList"></datalist>
           </label>
 
           <label>
@@ -57,6 +58,7 @@
             </select>
           </label>
         </div>
+        <p class="form-hint">Tip: Type a returning customer's name and their saved WhatsApp number will auto-fill. New customers are saved automatically when you add their number.</p>
       </section>
 
       <section class="services-section">

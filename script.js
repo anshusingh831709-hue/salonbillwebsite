@@ -35,6 +35,91 @@ const customerCount = document.getElementById("customerCount");
 const sendBulkMessageBtn = document.getElementById("sendBulkMessageBtn");
 const cancelBulkMessageBtn = document.getElementById("cancelBulkMessageBtn");
 
+const customerNameInput = document.getElementById("customerName");
+const whatsappInput = document.getElementById("whatsapp");
+const customerNamesList = document.getElementById("customerNamesList");
+const CUSTOMER_CACHE_KEY = "customerPhoneCache";
+
+let customerCache = {};
+
+function normalizeCustomerName(name) {
+  return (name || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function loadCustomerPhoneCache() {
+  try {
+    const raw = localStorage.getItem(CUSTOMER_CACHE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (error) {
+    console.warn("Could not parse customer cache:", error);
+    return {};
+  }
+}
+
+function saveCustomerPhoneCache(cache) {
+  localStorage.setItem(CUSTOMER_CACHE_KEY, JSON.stringify(cache));
+}
+
+function refreshCustomerNameDatalist() {
+  if (!customerNamesList) return;
+  customerNamesList.innerHTML = Object.keys(customerCache)
+    .sort()
+    .map((name) => `<option value="${name}">`)
+    .join("");
+}
+
+function updateCustomerPhoneCache(name, phone) {
+  const key = normalizeCustomerName(name);
+  const cleanPhone = cleanWhatsappNumber(phone);
+  if (!key) return;
+
+  if (cleanPhone) {
+    customerCache[key] = cleanPhone;
+    saveCustomerPhoneCache(customerCache);
+    refreshCustomerNameDatalist();
+  } else if (customerCache[key]) {
+    delete customerCache[key];
+    saveCustomerPhoneCache(customerCache);
+    refreshCustomerNameDatalist();
+  }
+}
+
+function autofillPhoneForCustomerName(name) {
+  const key = normalizeCustomerName(name);
+  if (!key) return;
+  const cachedNumber = customerCache[key];
+  if (cachedNumber && !whatsappInput.value.trim()) {
+    whatsappInput.value = cachedNumber;
+  }
+}
+
+function populateCacheFromInvoices(invoices) {
+  if (!Array.isArray(invoices)) return;
+  invoices.forEach((invoice) => {
+    if (invoice.customerName && invoice.whatsapp) {
+      updateCustomerPhoneCache(invoice.customerName, invoice.whatsapp);
+    }
+  });
+}
+
+function handleCustomerNameInput() {
+  const nameValue = customerNameInput.value.trim();
+  if (!nameValue) return;
+  autofillPhoneForCustomerName(nameValue);
+}
+
+function maybeSaveCustomerDetails() {
+  const customerName = customerNameInput.value.trim();
+  const whatsappNumber = whatsappInput.value.trim();
+  if (customerName && whatsappNumber) {
+    updateCustomerPhoneCache(customerName, whatsappNumber);
+  }
+}
+
+function handleWhatsappInputBlur() {
+  maybeSaveCustomerDetails();
+}
+
 // Backend API URL - Always use localhost:5000 for development, or fallback to origin
 const API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
   ? "http://localhost:5000"
@@ -173,6 +258,7 @@ function generateInvoiceText() {
 }
 
 function sendToWhatsapp() {
+  maybeSaveCustomerDetails();
   const rawNumber = document.getElementById("whatsapp").value;
   const number = cleanWhatsappNumber(rawNumber);
   const invoice = invoiceTextEl.value || generateInvoiceText();
@@ -358,6 +444,8 @@ async function saveInvoiceToDatabase() {
     return;
   }
 
+  maybeSaveCustomerDetails();
+
   const invoiceData = {
     customerName,
     whatsapp,
@@ -467,15 +555,20 @@ function printInvoice() {
 
 addServiceBtn.addEventListener("click", () => addServiceRow());
 generateBtn.addEventListener("click", () => {
+  maybeSaveCustomerDetails();
   generateInvoiceText();
   saveInvoiceToDatabase();
 });
 printBtn.addEventListener("click", printInvoice);
 sendWhatsappBtn.addEventListener("click", () => {
+  maybeSaveCustomerDetails();
   generateInvoiceText();
   saveInvoiceToDatabase();
   sendToWhatsapp();
 });
+customerNameInput.addEventListener("input", handleCustomerNameInput);
+customerNameInput.addEventListener("blur", handleCustomerNameInput);
+whatsappInput.addEventListener("blur", handleWhatsappInputBlur);
 discountEl.addEventListener("input", updateSummary);
 
 refreshDashboardBtn.addEventListener("click", loadDashboard);
@@ -772,6 +865,9 @@ async function sendBulkMessage() {
   }
 }
 
+customerCache = loadCustomerPhoneCache();
+refreshCustomerNameDatalist();
+
 addServiceRow({ name: "Haircut", price: 300, qty: 1 });
 loadDashboard();
 setInterval(loadDashboard, 30000);
@@ -809,6 +905,7 @@ async function loadDashboard() {
     
     console.log("✅ Dashboard data loaded:", result.data.length, "invoices");
     renderDashboard(result.data);
+    populateCacheFromInvoices(result.data);
   } catch (error) {
     console.error("Dashboard load failed:", error);
     dashboardTableEl.innerHTML = `<div style="color: red; padding: 20px;">
