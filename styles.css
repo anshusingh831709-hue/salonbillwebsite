@@ -863,29 +863,6 @@ button:active {
   font-size: 0.9rem;
 }
 
-.history-item-actions {
-  margin-top: 12px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.delete-invoice-btn {
-  border: 1px solid rgba(229, 62, 62, 0.25);
-  background: rgba(229, 62, 62, 0.1);
-  color: #c53030;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.delete-invoice-btn:hover {
-  background: rgba(229, 62, 62, 0.18);
-  box-shadow: 0 8px 18px rgba(197, 55, 55, 0.15);
-  transform: translateY(-1px);
-}
-
 @media (max-width: 740px) {
   .service-row {
     grid-template-columns: 1fr;
