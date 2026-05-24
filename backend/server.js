@@ -23,8 +23,8 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection String
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://anshusingh831709:as5759423@cluster0.skebsbg.mongodb.net/";
-const DB_NAME = "salon_billing";
+const MONGO_URI = process.env.MONGO_URI;
+const DB_NAME = process.env.DB_NAME || "salon_billing";
 const COLLECTION_NAME = "invoices";
 
 let mongoClient;
@@ -33,6 +33,12 @@ let invoicesCollection;
 
 // Connect to MongoDB
 async function connectDB() {
+  if (!MONGO_URI) {
+    console.error("❌ MONGO_URI is not set. Set backend/.env or the environment variable MONGO_URI.");
+    console.error("Example: mongodb+srv://<username>:<password>@<cluster>.mongodb.net/salon_billing?retryWrites=true&w=majority");
+    return false;
+  }
+
   try {
     mongoClient = new MongoClient(MONGO_URI);
     await mongoClient.connect();
@@ -42,7 +48,7 @@ async function connectDB() {
     return true;
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
-    console.warn("⚠️  Database operations will not work. Please check MongoDB credentials.");
+    console.warn("⚠️  Database operations will not work. Please check MongoDB credentials and network access.");
     return false;
   }
 }
