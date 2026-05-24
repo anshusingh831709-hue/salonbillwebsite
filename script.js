@@ -21,6 +21,8 @@ const dayWiseListEl = document.getElementById("dayWiseList");
 const topServicesEl = document.getElementById("topServices");
 const monthSummaryEl = document.getElementById("monthSummary");
 const dashboardTableEl = document.getElementById("dashboardTable");
+const customerHistoryDiv = document.getElementById("customerHistory");
+let lastHistorySearchName = "";
 
 // Bulk Messaging Elements
 const bulkMessageBtn = document.getElementById("bulkMessageBtn");
@@ -635,6 +637,14 @@ document.getElementById("searchCustomer").addEventListener("keypress", (e) => {
   if (e.key === "Enter") fetchCustomerHistory();
 });
 
+customerHistoryDiv?.addEventListener("click", async (event) => {
+  const deleteButton = event.target.closest(".delete-invoice-btn");
+  if (!deleteButton) return;
+  const invoiceId = deleteButton.dataset.invoiceId;
+  if (!invoiceId) return;
+  await deleteInvoice(invoiceId);
+});
+
 // Collapsible table section
 document.getElementById("tableToggleHeader").addEventListener("click", () => {
   const table = document.getElementById("dashboardTable");
@@ -652,6 +662,7 @@ document.getElementById("tableToggleHeader").addEventListener("click", () => {
 
 async function fetchCustomerHistory() {
   const customerName = document.getElementById("searchCustomer").value.trim();
+  lastHistorySearchName = customerName;
 
   if (!customerName) {
     alert("Please enter a customer name.");
@@ -705,6 +716,9 @@ async function fetchCustomerHistory() {
               <div class="history-item-detail">WhatsApp: ${invoice.whatsapp}</div>
               <div class="history-item-detail">Payment: ${invoice.paymentMethod}</div>
               <div class="history-item-detail">Services: ${invoice.services.length} items</div>
+              <div class="history-item-actions">
+                <button class="delete-invoice-btn" data-invoice-id="${invoice._id}">Delete</button>
+              </div>
             </div>`
           )
           .join("");
@@ -717,6 +731,33 @@ async function fetchCustomerHistory() {
       .join("");
   } catch (error) {
     historyDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+  }
+}
+
+async function deleteInvoice(invoiceId) {
+  if (!confirm("Delete this invoice? This will remove it from history and update totals permanently.")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/api/invoices/${invoiceId}`, {
+      method: "DELETE",
+    });
+    const result = await response.json();
+
+    if (!result.success) {
+      alert("Could not delete invoice: " + (result.error || "Unknown error"));
+      return;
+    }
+
+    alert("Invoice deleted successfully.");
+    await loadDashboard();
+    if (lastHistorySearchName) {
+      document.getElementById("searchCustomer").value = lastHistorySearchName;
+      await fetchCustomerHistory();
+    }
+  } catch (error) {
+    alert("Error deleting invoice: " + error.message);
   }
 }
 

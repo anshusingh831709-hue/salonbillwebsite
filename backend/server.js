@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const path = require("path");
 require("dotenv").config();
@@ -89,6 +89,26 @@ app.get("/api/invoices/customer/:name", async (req, res) => {
     res.json({ success: true, data: invoices, count: invoices.length });
   } catch (error) {
     console.error("Error fetching customer invoices:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// DELETE: Remove an invoice by ID
+app.delete("/api/invoices/:id", async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+    if (!ObjectId.isValid(invoiceId)) {
+      return res.status(400).json({ success: false, error: "Invalid invoice ID." });
+    }
+
+    const result = await invoicesCollection.deleteOne({ _id: new ObjectId(invoiceId) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ success: false, error: "Invoice not found." });
+    }
+
+    res.json({ success: true, message: "Invoice deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting invoice:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
