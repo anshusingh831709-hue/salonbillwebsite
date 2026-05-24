@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const path = require("path");
 require("dotenv").config();
@@ -23,16 +23,27 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection String
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://anshusingh831709:as5759423@cluster0.skebsbg.mongodb.net/";
-const DB_NAME = "salon_billing";
+const MONGO_URI = process.env.MONGO_URI;
+const DB_NAME = process.env.DB_NAME || "salon_billing";
 const COLLECTION_NAME = "invoices";
 
 let mongoClient;
 let db;
 let invoicesCollection;
 
+function isMongoUriInvalid(uri) {
+  return !uri || /<cluster>|<username>|<password>/i.test(uri) || !uri.startsWith("mongodb+srv://");
+}
+
 // Connect to MongoDB
 async function connectDB() {
+  if (isMongoUriInvalid(MONGO_URI)) {
+    console.error("❌ Invalid or missing MONGO_URI.");
+    console.error("⚠️ Set the environment variable MONGO_URI to a real MongoDB Atlas URI.");
+    console.error("Example: mongodb+srv://username:password@cluster0.skebsbg.mongodb.net/salon_billing?retryWrites=true&w=majority");
+    return false;
+  }
+
   try {
     mongoClient = new MongoClient(MONGO_URI);
     await mongoClient.connect();
@@ -42,7 +53,7 @@ async function connectDB() {
     return true;
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
-    console.warn("⚠️  Database operations will not work. Please check MongoDB credentials.");
+    console.warn("⚠️  Database operations will not work. Please check MongoDB credentials and network access.");
     return false;
   }
 }
@@ -89,6 +100,26 @@ app.get("/api/invoices/customer/:name", async (req, res) => {
     res.json({ success: true, data: invoices, count: invoices.length });
   } catch (error) {
     console.error("Error fetching customer invoices:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// DELETE: Delete invoice by ID
+app.delete("/api/invoices/:id", async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+    if (!ObjectId.isValid(invoiceId)) {
+      return res.status(400).json({ success: false, error: "Invalid invoice ID." });
+    }
+
+    const result = await invoicesCollection.deleteOne({ _id: new ObjectId(invoiceId) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ success: false, error: "Invoice not found." });
+    }
+
+    res.json({ success: true, message: "Invoice deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting invoice:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
