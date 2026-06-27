@@ -132,7 +132,18 @@ function currency(amount) {
 }
 
 function cleanWhatsappNumber(number) {
-  return (number || "").replace(/[^\d]/g, "");
+  // Strip non-digits and normalize to the last 10 digits (Indian mobile)
+  const digits = (number || "").replace(/[^\d]/g, "");
+  if (digits.length >= 10) {
+    return digits.slice(-10);
+  }
+  return digits;
+}
+
+function formatWhatsappNumberForApi(raw) {
+  const clean = cleanWhatsappNumber(raw);
+  if (clean.length !== 10) return null;
+  return `91${clean}`;
 }
 
 function addServiceRow(defaults = {}) {
@@ -262,19 +273,17 @@ function generateInvoiceText() {
 function sendToWhatsapp() {
   maybeSaveCustomerDetails();
   const rawNumber = document.getElementById("whatsapp").value;
-  const number = cleanWhatsappNumber(rawNumber);
+  const formatted = formatWhatsappNumberForApi(rawNumber);
   const invoice = invoiceTextEl.value || generateInvoiceText();
 
-  if (!number) {
-    alert("Please enter customer WhatsApp number.");
+  if (!formatted) {
+    alert("Please enter a valid 10-digit mobile number.");
     return;
   }
 
-  if (!invoice) {
-    return;
-  }
+  if (!invoice) return;
 
-  const url = `https://wa.me/${number}?text=${encodeURIComponent(invoice)}`;
+  const url = `https://wa.me/${formatted}?text=${encodeURIComponent(invoice)}`;
   window.open(url, "_blank");
 }
 
@@ -437,7 +446,7 @@ async function generateInvoicePdf() {
 
 async function saveInvoiceToDatabase() {
   const customerName = document.getElementById("customerName").value.trim();
-  const whatsapp = document.getElementById("whatsapp").value.trim();
+  const whatsapp = cleanWhatsappNumber(document.getElementById("whatsapp").value.trim());
   const paymentMethod = document.getElementById("paymentMethod").value;
   const { services, subtotal, discountPercent, discount, total } = updateSummary();
 
@@ -488,14 +497,12 @@ async function sendSMS() {
     return;
   }
 
-  if (!invoice) {
-    return;
-  }
+  if (!invoice) return;
 
-  // Format phone number: ensure it has country code
-  let formattedNumber = phoneNumber.replace(/[^\d]/g, "");
-  if (!formattedNumber.startsWith("91")) {
-    formattedNumber = "91" + formattedNumber; // India country code
+  const formattedNumber = formatWhatsappNumberForApi(phoneNumber);
+  if (!formattedNumber) {
+    alert("Please enter a valid 10-digit mobile number.");
+    return;
   }
 
   try {
@@ -639,6 +646,14 @@ document.getElementById("searchCustomer").addEventListener("keypress", (e) => {
 
 customerHistoryDiv?.addEventListener("click", async (event) => {
   const deleteButton = event.target.closest(".delete-invoice-btn");
+  if (!deleteButton) return;
+  const invoiceId = deleteButton.dataset.invoiceId;
+  if (!invoiceId) return;
+  await deleteInvoice(invoiceId);
+});
+
+dashboardTableEl?.addEventListener("click", async (event) => {
+  const deleteButton = event.target.closest(".dashboard-delete-btn");
   if (!deleteButton) return;
   const invoiceId = deleteButton.dataset.invoiceId;
   if (!invoiceId) return;
@@ -1062,12 +1077,14 @@ function renderDashboard(invoices) {
       const rows = dateGroups[dateKey]
         .map((invoice) => {
           const invoiceDate = new Date(invoice.createdAt);
+          const invoiceId = invoice._id ? invoice._id.toString() : "";
           return `<div class="dashboard-row">
             <span>${displayDate} ${invoiceDate.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
             <span>${invoice.customerName || "Unknown"}</span>
             <span>₹${Number(invoice.total).toFixed(2)}</span>
             <span>${invoice.paymentMethod || "N/A"}</span>
             <span>${invoice.services?.length || 0} items</span>
+            <span><button class="dashboard-delete-btn" data-invoice-id="${invoiceId}">Delete</button></span>
           </div>`;
         })
         .join("");
@@ -1077,6 +1094,7 @@ function renderDashboard(invoices) {
             <span>Amount</span>
             <span>Payment</span>
             <span>Items</span>
+            <span>Action</span>
           </div>`, rows];
     })
     .join("");
